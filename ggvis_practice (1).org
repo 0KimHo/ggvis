@@ -1,0 +1,295 @@
+#+TITLE: Barplots and Scatterplots in ggvis
+#+AUTHOR: Kim Ho and Jackson Harrod [Pledged]
+#+SUBTITLE:DSC205 Introduction to Advanced Data Science Sprint
+#+SUBTITLE: Case study - Data Science Jobs
+#+STARTUP:overview hideblocks indent inlineimages
+#+OPTIONS: toc:nil num:nil ^:nil
+#+PROPERTY: header-args:R :exports both :results output :session *R* :noweb yes
+* TODO Identify and pledge yourself
+
+1) In Emacs, replace the placeholder ~[yourname]~ at the top of this
+   file by your own name and write ~(pledged)~ next to it
+2) Go with the cursor on the headline and change the ~TODO~ label to ~DONE~
+   by entering ~S-<right>~ ("Shift + right-arrow").
+   
+* Question
+ What factors should one consider when applying for a job in the data
+ science field?
+* Reason
+- As data science students, it would benefit us to understand
+how different factors could impact our future salaries. We chose ggvis to
+learn more about the package's capabilities for visualizing and
+interacting with a dataset.
+* ggvis
+- Quick Facts:
+~ incorporates ggplot2 reactive framework of Shiny, web graphic features from
+Vega, and dplyr's grammar of data transformation
+~ Interactive graphics (such as sliders)
+~ Basic commands: 
+ "%>%" = pipe operator
+ "~" = sqiuggle operator
+ "=" = assign scaled value
+ ":=" assign unscaled value
+
+* Notes on the Dataset
+~ The data was found on Kaggle and aggregated by ai-jobs.net Salaries
+  -  ai.jobs.net was launched in October of 2018 and is owned by
+    foorfilla LLC, a small tech company based in Zurich
+   Taken from ai-jobs.net:
+   #+begin_quote
+   "This site collects salary information anonymously
+   from professionals all over the world in the AI, ML,
+   Data Science space and makes it publicly available for
+   anyone to use, share and play around with."
+   
+   #+end_quote
+~ All jobs are full-time from 2020-2022.
+~ Experience levels were given the following numerical values:
+  0 - None/Entry Level
+  1 - Junior/Mid Level
+  2 - Senior/Intermediate Level
+  3 - Executive/Expert Level
+
+* TODO Install and load packages
+- To begin, install and load the package ggvis
+#+begin_src R
+
+#+end_src
+
+* TODO Read the .csv file
+#+begin_src R
+  dsc_jobs <- ______("https://raw.githubusercontent.com/jacksonwharrod/glowing-octo-telegram/main/ds_salaries%20-%20ds_salaries.csv")
+#+end_src
+
+* TODO Check the structure of ~dsc_jobs~
+#+begin_src R
+  
+#+end_src
+
+* TODO Choosing which job_titles to barplot
+** TODO How many job titles are listed in the data set?
+- Print the table of job titles
+ #+begin_src R
+   _____(dsc_jobs$_____)
+
+ #+end_src
+ 
+-  Check the length of the table
+   
+ #+begin_src R
+  
+  _____(table(dsc_jobs$job_title))
+
+ #+end_src
+
+
+ 
+** TODO Convert the table into a matrix
+- There are too many jobs to include in a barplot, so let's extract
+  the jobs with the most entries in the dataset. First, create a
+  matrix using as.matrix
+  
+#+begin_src R
+  top_jobs <- _____(table(dsc_jobs$job_title))
+ 
+#+end_src
+
+
+** TODO Extraction
+- Filter out jobs with number of entries > 10 using ~which~ and assign those jobs to
+  top_jobs
+  
+#+begin_src R
+  top_jobs <- ____(______[__]__)
+  top_jobs
+
+#+end_src
+
+** TODO Create a dataframe
+- Since we want to make a barplot, our next step is to create a
+  dataframe of the matrix
+#+begin_src R
+  top7_jobs <-  ________(top_jobs)
+  ## check the structure of the data frame
+  _________
+  
+  
+#+end_src
+
+
+- We want to have 7 observations and two variables
+#+begin_src R
+  
+  top7_jobs <- data.frame(Job_Title = c("Data Analyst",
+                                        "Data Architect",
+                                        "Data Engineer",                
+                                        "Data Science Manager",            
+                                        "Data Scientist",          
+                                        "Machine Learning Engineer",       
+                                        "Research Scientist"),
+                          count = c(13, 17, 18, 22, 23, 38, 49))
+  str(top7_jobs)
+
+#+end_src
+
+** TODO Barplot of Most In-Demand Jobs
+- We will now create a barplot of the most common jobs in the
+  dsc_jobs dataset using ~ggvis~ and ~layer_bars()~
+  #+begin_src R :results graphics file :file barplot1.png
+    top7_jobs %>%
+    ____(x=~_______, y=~________) %>%
+    ________ 
+
+  #+end_src
+
+*** TODO Widen Graph
+- Make the plot larger so the x-axis labels are easier to read using ~set_options~
+#+begin_src R 
+  top7_jobs %>%
+    ggvis(x=~Job_Title, y=~count) %>%
+    layer_bars() %>%
+    
+    ## use the arguments height and width
+    _______(_____, ______) 
+
+ #+end_src
+
+*** TODO Add Title and Axis Labels
+#+begin_src R
+  top7_jobs %>%
+    ggvis(x=~Job_Title, y=~count) %>%
+    layer_bars() %>%
+
+    ##make plot larger so x-axis labels are easier to read using ~set_options~
+    set_options(height=400, width=900) %>%
+
+    ##add title by setting orient to "top" in  add_axis
+    ______("x", _____=____,
+             ticks = 0,
+             properties = axis_props(axis=list(stroke="white"),
+             labels = list(fontSize = 0)),
+             title = "Most Common Jobs in dsc_jobs Dataset") %>%
+    ##include the axis titles using add_axis
+    _______("x", title = ________) %>%
+    _______("y", title = ________) 
+
+#+end_src
+
+#+RESULTS:
+  
+* TODO Salary in Relation to Experience Level and Job Title (Scatter Plot)
+- To create a scatterplot, use ~ggvis()~, ~layer_points()~, and ~group_by()~.
+- Set x to experience_level and y to salary_in_usd in ~ggvis.~
+- The argument for ~layer_points~ is fill, set to job_title.
+- ~group_by~ takes the same argument as fill.
+  
+#+begin_src R
+    dsc_jobs %>%
+    ggvis(_________, __________) %>%
+    _________(____=______) %>%
+    ______(______)
+ 
+#+end_src
+
+** TODO Enlarge Graph & Add Axes
+- There is a lot of data squished onto the chart right now, so use
+  ~set_options~ with the arguments ~height~ and ~width~ to make the chart
+  larger.
+- Use ~add_axis~ to title the x-axis and y-axis.
+  
+#+begin_src R
+    dsc_jobs %>%
+    ggvis(~experience_level, ~salary_in_usd) %>%
+    layer_points(fill=~job_title) %>%
+    group_by(job_title) %>%
+
+  ##make plot larger so points and y-axis are easier to read
+    _______(height=___, width=___) %>%
+    
+  ##add x- and y- axes with labels
+    add_axis(___, title = "Experience Level") %>%
+    add_axis(___, title = "Salary (USD)")
+#+end_src
+
+** TODO Axis customization
+- Notice that in the previous plot, the y-axis title and y-axis labels
+  overlap. There are two ways to deal with this issue.
+*** TODO 1) Rotate axis label
+#+begin_src R
+  dsc_jobs %>%
+  ggvis(~experience_level, ~salary_in_usd) %>%
+  layer_points(fill=~job_title) %>%
+  group_by(job_title) %>%
+
+  ##make plot larger so points and y-axis are easier to read
+  set_options(height=900, width=600) %>%
+    
+  ##add x- and y- axes with labels and rotate the y-axis labels so they are not covering the y-axis title (use axis_props)
+  add_axis("x", title = "Experience Level") %>%
+  add_axis("y", title = "Salary (USD)", properties = ________(_____ = list(angle=___, align="left", baseline = "middle")))
+#+end_src
+
+*** TODO 2)  Offset title
+#+begin_src R
+  dsc_jobs %>%
+  ggvis(~experience_level, ~salary_in_usd) %>%
+  layer_points(fill=~job_title) %>%
+  group_by(job_title) %>%
+
+  ##make plot larger so points and y-axis are easier to read
+  set_options(height=900, width=600) %>%
+    
+  ##add x- and y- axes with labels and offset the y-axis title (use title_offset)
+  add_axis("x", title = "Experience Level") %>%
+  add_axis("y", title = "Salary (USD)", ______ = ____)
+#+end_src
+
+** TODO Add title to scatterplot
+#+begin_src R
+  dsc_jobs %>%
+  ggvis(~experience_level, ~salary_in_usd) %>%
+  layer_points(fill=~job_title) %>%
+  group_by(job_title) %>%
+
+  ##make plot larger so points and y-axis are easier to read
+  set_options(height=1500, width=600) %>%
+
+  ##add x- and y- axes with labels and offset the y-axis title
+  add_axis("x", title = "Experience Level") %>%
+  add_axis("y", title = "Salary (USD)", title_offset = 70) %>%
+    
+  ##add title by setting orient to "top" in  ~add_axis~
+  ________("x", orient=____,
+           ticks = 0,
+           properties = axis_props(axis=list(stroke="white")),
+           title = "Data Science Salaries vs Experience Level and Job")
+#+end_src
+
+* Limitations
+ ~ From exploring the website ai-jobs.net, the data seems to be
+ self-reported. The site is not clear on their system of validating
+ the data.
+ ~ The sample size of the dataset is relatively small.
+ 
+* References
+
+
+Bhatia, Ruchi. "Data Science Job Salaries." Kaggle, 15 June 2022,  [[  https://www.kaggle.com/datasets/ruchi798/data-science-job-salaries][URL: kaggle.com]]. 
+
+Chang, Winston, et. al. "ggvis: Interacive Grammar of Graphics." R
+Foundation for Statistical Computing, March
+2023, [[	https://ggvis.rstudio.com/][URL: ggvis.rstudio.com]]
+
+Chauhan, Yash. "Difference between Ggvis vs Ggplot in R."
+GeeksforGeeks, GeeksforGeeks, 2 Aug. 2022, [[ https://www.geeksforgeeks.org/difference-between-ggvis-vs-ggplot-in-r/][URL: geeksforgeeks.org]]
+
+De Mauro, Andrea, et al. "Human Resources for Big Data Professions: A
+systematic classification of job roles and required skill sets."
+Science Direct, [[https://www.sciencedirect.com/science/article/pii/S0306457317300018?casa_token=VA2QEJzTWtoAAAAA:af06rIJQGyRKZsWXlIUClf1LXUwzdm2qeZFzrGSvJ1goa_Krj6Ime4rSo48Opbc4Vu3UN7dz5Tc][URL: sciencedirect.com]]
+
+Dominik, Carsten. "Org Mode." Org Mode, 2013, [[ https://orgmode.org/][URL: orgmode.org]] 
+
+R Core Team. "R: A language and environment for statistical
+computing." R Foundation for Statistical Computing, 2019, 
+URL: [[https://www.R-project.org/][URL: R-project.org]]
+
